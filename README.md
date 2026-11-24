@@ -36,11 +36,31 @@ The project demonstrates serverless computing, REST API integration, cloud stora
 
 ## System Architecture
 
-User → Frontend → API Gateway → AWS Lambda → DynamoDB
+```mermaid
+flowchart TD
+    A[User / Web Browser]
+    B[Amazon CloudFront - Pending]
+    C[Amazon S3 - Frontend]
+    D[Amazon API Gateway]
+    E[AWS Lambda - Python]
+    F[Amazon DynamoDB]
+    G[AWS IAM]
 
-Amazon S3 stores the frontend files. API Gateway receives order requests and invokes the Lambda function. Lambda validates the order and stores it in DynamoDB.
+    A -.-> B
+    B -.-> C
+    A -->|POST /orders| D
+    D --> E
+    E -->|Store Order| F
+    G -.->|Permissions| E
 
-CloudFront integration is planned for secure HTTPS delivery of the frontend.
+    style A fill:#64748b,color:#fff
+    style B fill:#8b5cf6,color:#fff,stroke-dasharray:5 5
+    style C fill:#569a31,color:#fff
+    style D fill:#8b5cf6,color:#fff
+    style E fill:#ff9900,color:#000
+    style F fill:#4053d6,color:#fff
+    style G fill:#dd344c,color:#fff
+```
 
 ## API Endpoint
 
