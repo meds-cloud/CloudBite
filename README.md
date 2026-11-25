@@ -108,4 +108,12 @@ The backend returns a unique order ID after successfully storing an order.
 
 ## Disclaimer
 
-This project is an educational prototype. It is not intended for production use or real customer transactions.
+This project is an educational prototype. It is not intended for production use or real customer transactions. 
+## Website Demonstration
+
+The CloudBite interface allows customers to enter delivery details, select food items, calculate the total bill and submit an order to the AWS backend.
+
+### Successful Order Placement
+
+![CloudBite Website Interface](screenshots/website-interface.png)
+
