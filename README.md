@@ -86,7 +86,8 @@ The backend returns a unique order ID after successfully storing an order.
 - API Gateway integration: Completed
 - Backend testing: Completed
 - S3 configuration: Completed
-- CloudFront deployment: Pending AWS account approval
+- CloudFront deployment: Successfully deployed
+- Live website: https://d342ib4npim42d.cloudfront.net
 
 ## Learning Outcomes
 
@@ -111,9 +112,15 @@ The backend returns a unique order ID after successfully storing an order.
 This project is an educational prototype. It is not intended for production use or real customer transactions. 
 ## Website Demonstration
 
-The CloudBite interface allows customers to enter delivery details, select food items, calculate the total bill and submit an order to the AWS backend.
+### Homepage
+![CloudBite Homepage](screenshots/website-interface.png)
+
+### Food Menu
+![Food Menu](screenshots/food-menu.png)
+
+### Shopping Cart
+![Shopping Cart](screenshots/shopping-cart.png)
 
 ### Successful Order Placement
-
-![CloudBite Website Interface](screenshots/website-interface.png)
+![Order Success](screenshots/order-success.png)
 
