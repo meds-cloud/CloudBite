@@ -219,7 +219,7 @@ The frontend connects to the deployed AWS backend. Use fictional customer detail
 | CloudFront Deployment | Completed |
 | CloudFront Cache Invalidation | Completed |
 | Live End-to-End Testing | Completed |
-| Security and Billing Review | Pending |
+| Security and Billing Review | Basic checks completed; budget email verification pending |
 
 ## Learning Outcomes
 
@@ -236,6 +236,24 @@ The frontend connects to the deployed AWS backend. Use fictional customer detail
 - Performing end-to-end application testing
 - Managing source code using GitHub
 - Writing technical project documentation
+
+## Security and Cost Optimization
+
+- Private S3 bucket with Block Public Access enabled.
+- CloudFront Origin Access Control (OAC).
+- HTTPS-enabled website delivery.
+- Restricted API Gateway CORS to the CloudFront domain.
+- API throttling: 2 requests per second with a burst limit of 5.
+- Least-privilege IAM permissions for DynamoDB.
+- Server-side order price calculation.
+- AWS Budgets configured for cost monitoring.
+- Fictional customer details for demonstration purposes.
+
+### Current Limitations
+
+- Customer authentication is not implemented.
+- CORS is not a substitute for API authentication.
+- Real payments and deliveries are not supported.
 
 ## Future Improvements
 
