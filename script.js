@@ -1,85 +1,9 @@
-
-const form = document.getElementById("orderForm");
-
-const item = document.getElementById("item");
-const quantity = document.getElementById("quantity");
-
-const API_URL = "https://3z3aukttf6.execute-api.ap-southeast-2.amazonaws.com/orders";
-
-function updateBill() {
-    const selectedOption = item.options[item.selectedIndex];
-
-    const foodName = item.value;
-    const price = Number(selectedOption.dataset.price);
-    const qty = Number(quantity.value) || 0;
-
-    const total = price * qty;
-
-    document.getElementById("summary").innerText =
-        foodName + " × " + qty;
-
-    document.getElementById("total").innerText =
-        "Total: ₹" + total;
-}
-
-item.addEventListener("change", updateBill);
-quantity.addEventListener("input", updateBill);
-
-form.addEventListener("submit", async function(event) {
-
-    event.preventDefault();
-
-    if (!form.reportValidity()) return;
-
-    const message = document.getElementById("message");
-
-    const order = {
-        name: document.getElementById("name").value,
-        phone: document.getElementById("phone").value,
-        email: document.getElementById("email").value,
-        address: document.getElementById("address").value,
-        city: document.getElementById("city").value,
-        pincode: document.getElementById("pincode").value,
-        landmark: document.getElementById("landmark").value,
-        food: item.value,
-        quantity: Number(quantity.value),
-        instructions: document.getElementById("instructions").value,
-        payment: document.getElementById("payment").value,
-        total: Number(item.options[item.selectedIndex].dataset.price)
-               * Number(quantity.value)
-    };
-
-    message.innerText = "Placing your order... ⏳";
-
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(order)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.orderId) {
-            throw new Error(result.message || "Order failed");
-        }
-
-        message.innerText =
-            "Order placed successfully! 🎉\n" +
-            "Thank you, " + order.name + "!\n" +
-            "Order ID: " + result.orderId + "\n" +
-            "Your order: " + order.quantity + " " +
-            order.food + "(s)\n" +
-            "Total: ₹" + order.total + "\n" +
-            "Payment: " + order.payment;
-
-    } catch (error) {
-        message.innerText =
-            "Unable to place order. Please try again.";
-        console.error(error);
-    }
-});
-
-updateBill();
+const API='https://3z3aukttf6.execute-api.ap-southeast-2.amazonaws.com/orders';
+const menu=[['burger','Truffle Burger','Burgers',249,'Juicy patty, cheese and house sauce','1568901346375-23c9450c58cd'],['pizza','Margherita Pizza','Pizza',299,'Tomato, mozzarella and basil','1574071318508-1cdbab80d002'],['pasta','Creamy Pasta','Pasta',149,'Comforting pasta with creamy sauce','1473093295043-cdd812d0e601'],['biryani','Royal Biryani','Indian',279,'Fragrant rice and aromatic spices','1563379091339-03b21ab4a4f8'],['brownie','Chocolate Brownie','Desserts',129,'Rich chocolate indulgence','1606313564200-e75d5e30476c'],['coffee','Iced Coffee','Drinks',119,'Chilled coffee for any craving','1461023058943-07fcbe16d735']].map(([id,name,category,price,desc,img])=>({id,name,category,price,desc,img}));
+const $=id=>document.getElementById(id);let category='All',cart={},busy=false;const money=n=>'₹'+n;const sum=()=>menu.reduce((s,p)=>s+p.price*(cart[p.id]||0),0);const count=()=>Object.values(cart).reduce((a,b)=>a+b,0);
+function renderMenu(){const q=$('search').value.toLowerCase().trim();$('products').innerHTML=menu.filter(p=>(category==='All'||p.category===category)&&`${p.name} ${p.desc}`.toLowerCase().includes(q)).map(p=>`<article class="product ${cart[p.id]?'selected':''}"><img loading="lazy" src="https://images.unsplash.com/photo-${p.img}?w=600&auto=format&fit=crop&q=80" alt="${p.name}"><div class="info"><small class="eyebrow">${p.category}</small><h3>${p.name}</h3><p>${p.desc}</p><div class="selection-label">${cart[p.id]?'✓ Added to bag':''}</div><div class="price"><strong>${money(p.price)}</strong>${cart[p.id]?`<div class="qty"><button data-minus="${p.id}" aria-label="Remove one ${p.name}">−</button><span>${cart[p.id]}</span><button data-add="${p.id}" aria-label="Add one ${p.name}">+</button></div>`:`<button data-add="${p.id}">Add +</button>`}</div></div></article>`).join('')||'<p>No dishes found.</p>';}
+let toastTimer; const toast=document.createElement('div');toast.className='cart-toast';toast.setAttribute('role','status');document.body.append(toast);function notify(text){toast.textContent=text;toast.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('visible'),2200);}
+function renderFilters(){$('filters').innerHTML=['All',...new Set(menu.map(p=>p.category))].map(c=>`<button class="chip ${c===category?'active':''}" data-category="${c}" aria-pressed="${c===category}">${c}</button>`).join('');}
+function renderCart(){$('count').textContent=count();$('total').textContent=money(sum());$('lines').innerHTML=menu.filter(p=>cart[p.id]).map(p=>`<div class="line"><div><strong>${p.name}</strong><br>${money(p.price*cart[p.id])}</div><div><button data-minus="${p.id}" aria-label="Remove one ${p.name}" ${busy?'disabled':''}>−</button> ${cart[p.id]} <button data-add="${p.id}" aria-label="Add one ${p.name}" ${busy?'disabled':''}>+</button></div></div>`).join('')||'<p>Your bag is empty.</p>';$('submit').disabled=busy||!count();}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const {add,minus,category:c}=b.dataset;if(c){category=c;renderFilters();renderMenu();}if(!busy&&add&&count()<50){cart[add]=(cart[add]||0)+1;$('message').className='';$('message').textContent='';renderCart();renderMenu();notify('✓ '+menu.find(p=>p.id===add).name+' added to bag');}if(!busy&&minus){cart[minus]=Math.max(0,(cart[minus]||0)-1);renderCart();renderMenu();notify(cart[minus]?'Bag updated':'Item removed from bag');}});$('search').addEventListener('input',renderMenu);$('cartOpen').onclick=()=>{renderCart();$('bag').showModal();};$('close').onclick=()=>$('bag').close();
+$('checkout').onsubmit=async e=>{e.preventDefault();if(busy||!count())return;const data=Object.fromEntries(new FormData(e.target));data.items=menu.filter(p=>cart[p.id]).map(p=>({id:p.id,quantity:cart[p.id]}));busy=true;renderCart();$('message').className='';$('message').textContent='Placing your order…';try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await res.json();if(!res.ok||!result.orderId)throw Error(result.message||'Order failed');$('message').className='order-success';$('message').textContent=`✓ Order placed! ID: ${result.orderId} · Total: ${money(result.total)}`;cart={};e.target.reset();renderMenu();}catch(err){$('message').textContent='Could not confirm order. Check your connection and backend before retrying.';}finally{busy=false;renderCart();}};renderFilters();renderMenu();renderCart();
