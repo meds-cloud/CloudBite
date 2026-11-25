@@ -23,7 +23,7 @@ The project demonstrates serverless computing, HTTP API integration, cloud stora
 | Technology | Purpose |
 |---|---|
 | HTML5 | Website structure |
-| CSS3 | Responsive website design |
+| CSS3 | Website design |
 | JavaScript | Frontend logic and API integration |
 | Python 3.13 | Backend programming |
 | Boto3 | AWS SDK for Python |
@@ -39,20 +39,17 @@ The project demonstrates serverless computing, HTTP API integration, cloud stora
 ## Features
 
 - Premium black and gold website design
-- Responsive user interface
 - Interactive food menu with photographs
 - Food category filtering
 - Real-time menu search
 - Multi-item shopping cart
-- Visual item selection indicators
-- Added-to-bag notifications
 - Quantity adjustment and item removal
 - Automatic bill calculation
 - Server-side price calculation
 - Customer delivery details collection
 - Serverless backend processing
 - Unique order ID generation
-- Customer input and quantity validation
+- Order quantity validation
 - Persistent order storage
 - Order status and timestamp recording
 - Order confirmation messages
@@ -90,12 +87,12 @@ flowchart TD
 ## How It Works
 
 1. The user accesses the website through Amazon CloudFront.
-2. CloudFront retrieves the frontend files from Amazon S3.
+2. CloudFront retrieves the frontend files from Amazon S3 when required.
 3. The user browses the food menu and adds items to the shopping cart.
 4. JavaScript calculates the estimated order total.
 5. The user enters delivery details and submits the order.
 6. API Gateway receives the POST request.
-7. AWS Lambda validates the order details.
+7. AWS Lambda processes and validates the order.
 8. Lambda calculates the final price using backend menu prices.
 9. A unique order ID is generated.
 10. The order is stored in Amazon DynamoDB.
@@ -103,43 +100,18 @@ flowchart TD
 
 ## API Endpoint
 
-- API Type: HTTP API
-- Method: POST
-- Route: /orders
-- Request format: JSON
-- Response format: JSON
+| Property | Value |
+|---|---|
+| API Type | HTTP API |
+| Method | POST |
+| Route | /orders |
+| Request Format | JSON |
+| Response Format | JSON |
+| Integration | AWS Lambda |
 
-### Sample Request
+The backend processes multi-item orders and returns a unique order ID after successfully storing an order.
 
-```json
-{
-  "name": "Demo Customer",
-  "phone": "9999999999",
-  "address": "Demo Address",
-  "items": [
-    {
-      "id": "burger",
-      "quantity": 1
-    },
-    {
-      "id": "pasta",
-      "quantity": 2
-    }
-  ]
-}
-```
-
-### Sample Response
-
-```json
-{
-  "message": "Order placed successfully!",
-  "orderId": "example-unique-order-id",
-  "total": 547
-}
-```
-
-The backend calculates the final order total independently using predefined menu prices.
+The final order total is calculated independently using predefined backend menu prices rather than trusting prices submitted by the frontend.
 
 ## AWS Configuration
 
@@ -152,20 +124,23 @@ The backend calculates the final order total independently using predefined menu
 | DynamoDB Table | CloudBiteOrders |
 | Partition Key | orderId |
 | API Gateway | CloudBiteAPI |
-| CloudFront Distribution | CloudBite |
+| API Route | POST /orders |
 
 ## Database Design
 
-| Attribute | Data Type |
-|---|---|
-| orderId | String (Partition Key) |
-| name | String |
-| phone | String |
-| address | String |
-| items | List |
-| total | Number |
-| status | String |
-| orderTime | String |
+Amazon DynamoDB stores customer orders using a unique order ID as the partition key.
+
+Each multi-item order contains information such as:
+
+- Unique order ID
+- Customer name
+- Customer phone number
+- Delivery address
+- Selected food items
+- Item quantities
+- Final order total
+- Order status
+- Order creation timestamp
 
 ## Project Structure
 
@@ -202,6 +177,34 @@ CloudBite/
 
 ![Order Success](screenshots/order-success.png)
 
+## Running the Project Locally
+
+Clone the repository:
+
+```bash
+git clone https://github.com/meds-cloud/CloudBite.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd CloudBite
+```
+
+Start a local development server:
+
+```bash
+python3 -m http.server 8000
+```
+
+Open the following address in your browser:
+
+```text
+http://localhost:8000
+```
+
+The frontend connects to the deployed AWS backend. Use fictional customer details when testing orders.
+
 ## Project Status
 
 | Component | Status |
@@ -214,6 +217,7 @@ CloudBite/
 | Backend Testing | Completed |
 | S3 Hosting | Completed |
 | CloudFront Deployment | Completed |
+| CloudFront Cache Invalidation | Completed |
 | Live End-to-End Testing | Completed |
 | Security and Billing Review | Pending |
 
@@ -242,7 +246,7 @@ CloudBite/
 - Online payment integration
 - Enhanced input validation
 - API abuse protection
-- Application monitoring
+- Application monitoring using Amazon CloudWatch
 - Automated deployment using CI/CD
 - Infrastructure as Code using AWS CloudFormation
 
@@ -269,3 +273,5 @@ GitHub: [meds-cloud](https://github.com/meds-cloud)
 ---
 
 **CloudBite 2.0 — Good Food. Great Nights.**
+
+Built as a hands-on AWS Cloud Computing portfolio project.
